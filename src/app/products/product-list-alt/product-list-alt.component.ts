@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import {EMPTY, Subscription} from 'rxjs';
 
-import { Product } from '../product';
-import { ProductService } from '../product.service';
+import {Product} from '../product';
+import {ProductService} from '../product.service';
+import {catchError} from 'rxjs/operators';
 
 @Component({
   selector: 'pm-product-list',
   templateUrl: './product-list-alt.component.html'
 })
-export class ProductListAltComponent implements OnInit, OnDestroy {
+export class ProductListAltComponent implements  OnDestroy {
   pageTitle = 'Products';
   errorMessage = '';
   selectedProductId: number;
@@ -17,14 +18,15 @@ export class ProductListAltComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   sub: Subscription;
 
-  constructor(private productService: ProductService) { }
-
-  ngOnInit(): void {
-    this.sub = this.productService.getProducts().subscribe(
-      products => this.products = products,
-      error => this.errorMessage = error
+  products$ = this.productService.products$
+    .pipe(
+      catchError(err => {
+        this.errorMessage = err;
+        return EMPTY;
+      })
     );
-  }
+
+  constructor(private productService: ProductService) { }
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
