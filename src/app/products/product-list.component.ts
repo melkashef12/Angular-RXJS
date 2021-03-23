@@ -5,6 +5,7 @@ import {EMPTY, Observable, Subscription} from 'rxjs';
 import {Product} from './product';
 import {ProductService} from './product.service';
 import {catchError, filter, map} from 'rxjs/operators';
+import {ProductCategoryService} from '../product-categories/product-category.service';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -32,15 +33,24 @@ export class ProductListComponent  {
       )
     );
 
+  categories$ = this.productCategoryService.$productCategories
+    .pipe(
+      catchError(err => {
+        this.errorMessage = err;
+        return EMPTY;
+      })
+    );
+
   sub: Subscription;
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService,
+              private productCategoryService: ProductCategoryService) { }
 
   onAdd(): void {
     console.log('Not yet implemented');
   }
 
   onSelected(categoryId: string): void {
-    console.log('Not yet implemented');
+    this.selectedCategoryId = +categoryId;
   }
 }
