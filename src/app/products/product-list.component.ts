@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 
-import {EMPTY, Observable, Subscription} from 'rxjs';
+import {combineLatest, EMPTY, Observable, Subject, Subscription} from 'rxjs';
 
 import {Product} from './product';
 import {ProductService} from './product.service';
@@ -18,20 +18,22 @@ export class ProductListComponent  {
   categories;
   selectedCategoryId = 1;
 
-  products$ = this.productService.productsWithCategory$
+  private categorySelectedSubject = new Subject<number>();
+  categorySelectedAction$ = this.categorySelectedSubject.asObservable();
+
+  products$ = combineLatest([
+    this.productService.productsWithCategory$,
+    this.categorySelectedAction$
+  ])
     .pipe(
-    catchError( err => {
+    map(([products, selectedCategory]) => {
+      return products.filter(product => selectedCategory ? product.categoryId === selectedCategory : true);
+    }),
+      catchError( err => {
       this.errorMessage = err;
       return EMPTY;
     })
   );
-
-  productsSimpleFilter$ = this.productService.productsWithCategory$
-    .pipe(
-      map( products =>
-        products.filter( product => this.selectedCategoryId ?  product.categoryId === this.selectedCategoryId : true )
-      )
-    );
 
   categories$ = this.productCategoryService.$productCategories
     .pipe(
@@ -51,6 +53,6 @@ export class ProductListComponent  {
   }
 
   onSelected(categoryId: string): void {
-    this.selectedCategoryId = +categoryId;
+    this.categorySelectedSubject.next( +categoryId);
   }
 }
