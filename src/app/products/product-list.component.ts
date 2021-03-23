@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 
-import {combineLatest, EMPTY, Observable, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subject, Subscription} from 'rxjs';
 
 import {Product} from './product';
 import {ProductService} from './product.service';
@@ -18,7 +18,7 @@ export class ProductListComponent  {
   categories;
   selectedCategoryId = 1;
 
-  private categorySelectedSubject = new Subject<number>();
+  private categorySelectedSubject = new BehaviorSubject<number>(0);
   categorySelectedAction$ = this.categorySelectedSubject.asObservable();
 
   products$ = combineLatest([
