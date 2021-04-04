@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 
-import {EMPTY, Subscription} from 'rxjs';
+import {EMPTY, Subject, Subscription} from 'rxjs';
 
 import {Product} from '../product';
 import {ProductService} from '../product.service';
@@ -13,7 +13,8 @@ import {catchError} from 'rxjs/operators';
 })
 export class ProductListAltComponent implements  OnDestroy {
   pageTitle = 'Products';
-  errorMessage = '';
+  errorMessageSubject = new Subject<string>();
+  errorMessage$ = this.errorMessageSubject.asObservable();
 
   products: Product[] = [];
   sub: Subscription;
@@ -21,7 +22,7 @@ export class ProductListAltComponent implements  OnDestroy {
   products$ = this.productService.productsWithCategory$
     .pipe(
       catchError(err => {
-        this.errorMessage = err;
+        this.errorMessageSubject.next(err);
         return EMPTY;
       })
     );
