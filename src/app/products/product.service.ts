@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import {combineLatest, Observable, throwError} from 'rxjs';
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, filter, map, tap} from 'rxjs/operators';
 
 import { Product } from './product';
 import { Supplier } from '../suppliers/supplier';
@@ -40,6 +40,12 @@ export class ProductService {
     ),
 
   );
+
+  selectedProduct$ = this.productsWithCategory$
+    .pipe(
+      map(products => products.find(product => product.id === 5)),
+      tap(product => console.log('Selected product : ' + product ))
+    );
 
   private fakeProduct(): Product {
     return {
