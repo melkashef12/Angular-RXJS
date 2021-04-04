@@ -17,7 +17,7 @@ export class ProductListAltComponent implements  OnDestroy {
   errorMessage$ = this.errorMessageSubject.asObservable();
 
   products: Product[] = [];
-  sub: Subscription;
+  //sub: Subscription;
 
   products$ = this.productService.productsWithCategory$
     .pipe(
@@ -32,7 +32,7 @@ export class ProductListAltComponent implements  OnDestroy {
   constructor(private productService: ProductService) { }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    // this.sub.unsubscribe();
   }
 
   onSelected(productId: number): void {
