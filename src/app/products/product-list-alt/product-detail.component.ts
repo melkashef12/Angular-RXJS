@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 
-import { ProductService } from '../product.service';
+import {ProductService} from '../product.service';
 import {catchError} from 'rxjs/operators';
 import {EMPTY} from 'rxjs';
 
 @Component({
   selector: 'pm-product-detail',
-  templateUrl: './product-detail.component.html'
+  templateUrl: './product-detail.component.html',
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class ProductDetailComponent {
   pageTitle = 'Product Detail';
